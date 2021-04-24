@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>level3</title>
+    <style>
+        img {
+            width: 140px;
+            height: 140px;
+        }
+    </style>
+</head>
+
+<body>
+    <button>搜索歌单</button>
+    <div id="result">
+        <img>
+    </div>
+    <script>
+        var Ajax = {
+            get: function (method, url, async, params, returntype, success, error) {
+                method = method.toUpperCase();
+                const xhr = new XMLHttpRequest();
+                xhr.responseType = returntype;
+                xhr.open(method, url, async = true);
+                if (method == 'GET') {
+                    if (params != "")
+                        params = "?" + params
+                    xhr.open(method, url + params, async = true);
+                    xhr.send();
+                }
+                xhr.onreadystatechange = function () {
+                    // 判断(服务端返回了所有的结果)
+                    if (xhr.readyState === 4) {
+                        // 判断响应状态码
+                        if (xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+                            success(xhr.response);
+                        } else {
+                            error();
+                        }
+                    }
+                }
+            },
+            post: function (method, url, async, params, returntype, success, error) {
+                method = method.toUpperCase();
+                const xhr = new XMLHttpRequest();
+                xhr.responseType = returntype;
+                xhr.open(method, url, async = true);
+                if (method == 'POST') {
+                    xhr.open(method, url, async = true);
+                    xhr.send(params);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                }
+                xhr.onreadystatechange = function () {
+                    // 判断(服务端返回了所有的结果)
+                    if (xhr.readyState === 4) {
+                        // 判断响应状态码
+                        if (xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+                            success(xhr.response);
+                        } else {
+                            error();
+                        }
+                    }
+                }
+            },
+        };
+        const btn = document.getElementsByTagName('button')[0];
+        const result = document.getElementById("result");
+        const img = document.getElementsByTagName('img')[0];
+        const success = function (data) {
+            console.log(data);
+            img.src = "" + data.result[0].picUrl + "";
+        }
+        function error() {
+            alert("error");
+        }
+        btn.onclick = function () {
+            Ajax.get('GET', 'http://musicapi.leanapp.cn/personalized?limit=1', true, "", 'json', success, error);
+        }
+    </script>
+</body>
+
+</html>
